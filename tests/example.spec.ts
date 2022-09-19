@@ -1,6 +1,14 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, chromium } from '@playwright/test';
 
-test('homepage has Playwright in title and get started link linking to the intro page', async ({ page }) => {
+test('homepage has Playwright in title and get started link linking to the intro page', async ({  }) => {
+  const browser = await chromium.launch({
+    headless: false
+  });
+  const context = await browser.newContext({ recordVideo: { dir: 'videos/' } });
+
+  // Open new page
+  const page = await context.newPage();
+
   await page.goto('https://playwright.dev/');
 
   // Expect a title "to contain" a substring.
@@ -17,4 +25,11 @@ test('homepage has Playwright in title and get started link linking to the intro
 
   // Expects the URL to contain intro.
   await expect(page).toHaveURL(/.*intro/);
+
+  // Close page
+  await page.close();
+
+  // ---------------------
+  await context.close();
+  await browser.close();
 });
